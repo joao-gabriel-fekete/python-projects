@@ -1,10 +1,12 @@
+#This script writes a txt file containing information from two columns of a data frame. 
+
 import pandas as pd #Pandas is the module used for working with DataFrames
 import re #Best way to work with RegEx
-import os #usado pelo shutil e glob (operating system)
+import os 
 import shutil # for high-level file and directory handling
-import glob #encontra paths através de padrões
+import glob #good for finding paths through patterns
 
-metadados = pd.read_excel(r'C:\Users\conta\Documents\metadados_lazy_corpus.xlsx') #Planilha deve estar em .xlsx e a última parte corresponder ao nome do arquivo | lembre-se de alterar o path para encontrar o seus "Documents".
+metadados = pd.read_excel(r'C:\Users\conta\Documents\metadados_lazy_corpus.xlsx')
 
 metadados["codigo_limpo"] = metadados["Código"]
 
@@ -13,13 +15,13 @@ for l,w in metadados.iterrows():
     line = re.sub(r'<', "", line)
     w["codigo_limpo"] = re.sub(r'>', "", line)
 
-st_metadado = metadados[["Código", "Copie e cole seu texto logo abaixo:", "codigo_limpo"]] #Seleciona apenas as colunas necessárias para continuar o processo
+st_metadado = metadados[["Código", "Copie e cole seu texto logo abaixo:", "codigo_limpo"]] #Select only essential columns
 
 path = r'C:\Users\conta\Documents'
 #Creating a folder for texts
 os.makedirs(path+'\Textos-CorIFA')
 
-# Creating txt
+## The is name with a code from the data frame
 for i, j in st_metadado.iterrows():
     code = j["codigo_limpo"] + '.txt'
     f = open("C:/Users/conta/Documents/Textos-CorIFA/"+code, "w", encoding="utf-8")
@@ -29,14 +31,14 @@ for i, j in st_metadado.iterrows():
 
 dest = path+ r"\Textos-CorIFA"
 
-#Creating Directories
+### Directories are created for each type of text
 for i in range(1,9):
     os.mkdir(dest+r'\Batch_'+str(i))
     batches = glob.glob(dest+r'\Batch_[0-9]')
         
 txt = glob.glob(dest+'\*[0-9].txt')
 
-#Dividing per Batch
+#### Texts are separated into groups according to patterns in their file name
 for i in txt:
     if re.match(r'.+Ne.Abs.*\.txt', i):
         shutil.move(i, batches[0])
